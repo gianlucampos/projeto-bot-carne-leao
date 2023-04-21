@@ -32,6 +32,11 @@ public class Dividend {
         this.nameActive = ActiveEnum.valueOf(codeActive).getDescription();
     }
 
+    public String getNameActive() {
+        this.nameActive = ActiveEnum.valueOf(codeActive).getDescription();
+        return nameActive;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

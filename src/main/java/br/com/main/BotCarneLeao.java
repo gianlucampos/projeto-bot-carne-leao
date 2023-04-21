@@ -1,15 +1,22 @@
 package br.com.main;
 
 import br.com.main.models.Dividend;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import dev.botcity.framework.bot.DesktopBot;
 import dev.botcity.maestro_sdk.BotExecutor;
 import dev.botcity.maestro_sdk.runner.BotExecution;
 import dev.botcity.maestro_sdk.runner.RunnableAgent;
+import lombok.SneakyThrows;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
 public class BotCarneLeao extends DesktopBot implements RunnableAgent {
+
+    private static final String PATH = "./src/resources/Reports.json";
 
     public BotCarneLeao() {
         try {
@@ -26,14 +33,7 @@ public class BotCarneLeao extends DesktopBot implements RunnableAgent {
 
     @Override
     public void action(BotExecution botExecution) {
-        List<Dividend> dividendList = List.of(
-                Dividend.builder()
-                        .dtActive("10/02/2022")
-                        .codeActive("AGNC")
-                        .value("R$ 9,96")
-                        .taxes("R$ 2,99")
-                        .build()
-        );
+        List<Dividend> dividendList = getDividendsList();
 
         try {
             goToRendimentosPage();
@@ -42,8 +42,16 @@ public class BotCarneLeao extends DesktopBot implements RunnableAgent {
             dividendList.forEach(this::adicionarPagamento);
 
         } catch (Exception e) {
+
             e.printStackTrace();
         }
+    }
+
+    @SneakyThrows
+    private List<Dividend> getDividendsList() {
+        JsonReader reader = new JsonReader(new FileReader(PATH));
+        Gson gson = new Gson();
+        return gson.fromJson(reader, new TypeToken<List<Dividend>>(){}.getType());
     }
 
     private void goToRendimentosPage() {
